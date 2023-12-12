@@ -48,8 +48,8 @@ collection_name = "erp_collection"
 local_directory = "erp_vect_embedding"
 persist_directory = os.path.join(os.getcwd(), local_directory)
 
-openai_key = get_secret()
-#openai_key = "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"
+#openai_key = get_secret()
+openai_key = "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"
 os.environ["OPENAI_API_KEY"] = openai_key
 embeddings = OpenAIEmbeddings(openai_api_key=openai_key, show_progress_bar=False)
 
@@ -63,11 +63,9 @@ vectDB = Chroma(collection_name=collection_name, persist_directory=persist_direc
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 chatQA = ConversationalRetrievalChain.from_llm(
-        OpenAI(
-            openai_api_key=openai_key,
-            temperature=0.0, model_name="gpt-3.5-turbo-1106"),
-    vectDB.as_retriever(),
-    memory=memory
+        OpenAI(temperature=0.0, model_name="gpt-3.5-turbo-1106"),
+               vectDB.as_retriever(),
+               memory=memory
 )
 
 @app.route('/')
@@ -84,7 +82,7 @@ def ask_question():
         response = chatQA({"question": question, "chat_history": chat_history})
         answer = response["answer"]
         chat_history.append({"question": question, "answer": answer})
-        return jsonify({"answer": answer, "chat_history": chat_history})
+        return "Helllllo"
 
     return jsonify({"error": "Invalid input"})
 
