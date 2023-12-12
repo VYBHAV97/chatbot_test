@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS                 
-import os
-import pandas as pd
-from langchain.document_loaders import CSVLoader
-from langchain.text_splitter import TokenTextSplitter
-from langchain.memory import ConversationBufferMemory
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.llms import OpenAI
-from langchain.chains import ConversationalRetrievalChain
+# import os
+# import pandas as pd
+# from langchain.document_loaders import CSVLoader
+# from langchain.text_splitter import TokenTextSplitter
+# from langchain.memory import ConversationBufferMemory
+# from langchain.embeddings.openai import OpenAIEmbeddings
+# from langchain.vectorstores import Chroma
+# from langchain.llms import OpenAI
+# from langchain.chains import ConversationalRetrievalChain
 
 app = Flask(__name__)
 CORS(app)  
