@@ -36,6 +36,7 @@ def get_secret():
 
     # Decrypts secret using the associated KMS key.
     secret = get_secret_value_response['SecretString']
+    return secret
 
 # loader = CSVLoader("C:\ChatBot_Using_RGA_LLM\OhioStateReportingQuesAns.csv")
 # csvData = loader.load()
@@ -47,8 +48,8 @@ collection_name = "erp_collection"
 local_directory = "erp_vect_embedding"
 persist_directory = os.path.join(os.getcwd(), local_directory)
 
-#openai_key = get_secret()
-openai_key = "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"
+openai_key = get_secret()
+#openai_key = "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"
 os.environ["OPENAI_API_KEY"] = openai_key
 embeddings = OpenAIEmbeddings(openai_api_key=openai_key, show_progress_bar=False)
 
