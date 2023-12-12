@@ -6,10 +6,36 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.llms import OpenAI
 from langchain.chains import ConversationalRetrievalChain
+import boto3
+from botocore.exceptions import ClientError
 
 application = Flask(__name__)
 app = application
 CORS(app)  
+
+def get_secret():
+
+    secret_name = "api_key_chatbot"
+    region_name = "eu-north-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    # Decrypts secret using the associated KMS key.
+    secret = get_secret_value_response['SecretString']
 
 # loader = CSVLoader("C:\ChatBot_Using_RGA_LLM\OhioStateReportingQuesAns.csv")
 # csvData = loader.load()
@@ -21,8 +47,7 @@ collection_name = "erp_collection"
 local_directory = "erp_vect_embedding"
 persist_directory = os.path.join(os.getcwd(), local_directory)
 
-openai_key = "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"
-os.environ["OPENAI_API_KEY"] = openai_key
+openai_key = get_secret()
 embeddings = OpenAIEmbeddings(openai_api_key=openai_key, show_progress_bar=False)
 
 # vectDB = Chroma.from_documents(splitData,
@@ -36,7 +61,8 @@ vectDB = Chroma(collection_name=collection_name, persist_directory=persist_direc
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 chatQA = ConversationalRetrievalChain.from_llm(
         OpenAI(
-           temperature=0.0, model_name="gpt-3.5-turbo-1106"),
+            openai_api_key=openai_key,
+            temperature=0.0, model_name="gpt-3.5-turbo-1106"),
     vectDB.as_retriever(),
     memory=memory
 )
@@ -62,3 +88,5 @@ def ask_question():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
