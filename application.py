@@ -21,7 +21,7 @@ collection_name = "erp_collection"
 local_directory = "erp_vect_embedding"
 persist_directory = os.path.join(os.getcwd(), local_directory)
 
-openai_key = "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"
+openai_key = "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"
 os.environ["OPENAI_API_KEY"] = openai_key
 embeddings = OpenAIEmbeddings(openai_api_key=openai_key, show_progress_bar=False)
 
@@ -45,19 +45,19 @@ chatQA = ConversationalRetrievalChain.from_llm(
 def index():
     return "ChatBot Flask Server is running!"
 
-# @app.route('/ask', methods=['POST'])
-# def ask_question():
-#     data = request.get_json()
-#     question = data.get('question', '')
-#     chat_history = data.get('chat_history', [])
+@app.route('/ask', methods=['POST'])
+def ask_question():
+    data = request.get_json()
+    question = data.get('question', '')
+    chat_history = data.get('chat_history', [])
 
-#     if question:
-#         response = chatQA({"question": question, "chat_history": chat_history})
-#         answer = response["answer"]
-#         chat_history.append({"question": question, "answer": answer})
-#         return jsonify({"answer": answer, "chat_history": chat_history})
+    if question:
+        response = chatQA({"question": question, "chat_history": chat_history})
+        answer = response["answer"]
+        chat_history.append({"question": question, "answer": answer})
+        return jsonify({"answer": answer, "chat_history": chat_history})
 
-#     return jsonify({"error": "Invalid input"})
+    return jsonify({"error": "Invalid input"})
 
 
 if __name__ == '__main__':
